@@ -5,6 +5,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -21,6 +23,6 @@ public class Member {
 
     private String name;
 
-    // NORMAL, SILVER, GOLD
-    private String grade;
+    @Enumerated(EnumType.STRING)
+    private Grade grade;
 }
