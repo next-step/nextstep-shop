@@ -1,0 +1,16 @@
+# 로컬 실행용 DB (인수 테스트는 Testcontainers를 쓰므로 필요 없다)
+services:
+  db:
+    image: postgres:13.6-alpine
+    container_name: nextstep-shop-db
+    environment:
+      POSTGRES_DB: nextstep_shop
+      POSTGRES_USER: nextstep
+      POSTGRES_PASSWORD: nextstep
+    ports:
+      - "5432:5432"
+    volumes:
+      - db-data:/var/lib/postgresql/data
+
+volumes:
+  db-data:

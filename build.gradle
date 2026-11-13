@@ -1,0 +1,108 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '2.7.18'
+    id 'io.spring.dependency-management' version '1.1.7'
+}
+
+group = 'nextstep'
+version = '0.0.1-SNAPSHOT'
+description = '쇼핑몰 주문·할인·환불 도메인을 Cucumber 기반 ATDD로 개발하는 NextStep 교육용 프로젝트'
+
+java {
+    // JDK 21로만 빌드한다
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+// Spring Boot가 관리하는 버전 덮어쓰기
+ext['lombok.version'] = '1.18.48'
+ext['junit-jupiter.version'] = '5.9.3'
+ext['liquibase.version'] = '4.18.0'
+ext['postgresql.version'] = '42.5.1'
+
+def cucumberVersion = '7.10.1'
+def junitPlatformVersion = '1.9.3'
+
+dependencyManagement {
+    imports {
+        mavenBom 'org.testcontainers:testcontainers-bom:1.21.4'
+    }
+}
+
+// 인수 테스트: src/acceptance (./gradlew acceptanceTest)
+sourceSets {
+    acceptance {
+        compileClasspath += sourceSets.main.output
+        runtimeClasspath += sourceSets.main.output
+    }
+}
+
+configurations {
+    acceptanceImplementation.extendsFrom testImplementation
+    acceptanceRuntimeOnly.extendsFrom testRuntimeOnly
+    acceptanceCompileOnly.extendsFrom testCompileOnly
+    acceptanceAnnotationProcessor.extendsFrom testAnnotationProcessor
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.liquibase:liquibase-core'
+    runtimeOnly 'org.postgresql:postgresql'
+
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+    testCompileOnly 'org.projectlombok:lombok'
+    testAnnotationProcessor 'org.projectlombok:lombok'
+
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'io.rest-assured:rest-assured'
+    testImplementation 'org.testcontainers:junit-jupiter'
+    testImplementation 'org.testcontainers:postgresql'
+
+    testImplementation "org.junit.platform:junit-platform-engine:${junitPlatformVersion}"
+    testImplementation "org.junit.platform:junit-platform-suite-api:${junitPlatformVersion}"
+    testImplementation "org.junit.platform:junit-platform-console-standalone:${junitPlatformVersion}"
+
+    testImplementation "io.cucumber:cucumber-spring:${cucumberVersion}"
+    testImplementation "io.cucumber:cucumber-java:${cucumberVersion}"
+    testImplementation "io.cucumber:cucumber-junit-platform-engine:${cucumberVersion}"
+}
+
+// 단위 테스트: ./gradlew test
+tasks.named('test') {
+    useJUnitPlatform()
+}
+
+tasks.register('acceptanceTest', Test) {
+    description = 'Cucumber 인수 테스트를 실행한다.'
+    group = 'verification'
+    testClassesDirs = sourceSets.acceptance.output.classesDirs
+    classpath = sourceSets.acceptance.runtimeClasspath
+    shouldRunAfter tasks.named('test')
+
+    useJUnitPlatform()
+    filter {
+        includeTestsMatching 'nextstep.acceptance.RunCucumberTest'
+        // 시나리오가 하나도 없는 초기 상태에서도 실패하지 않는다
+        failOnNoMatchingTests = false
+    }
+    systemProperty 'cucumber.junit-platform.naming-strategy', 'long'
+    // -Dcucumber.filter.tags="@wip" 같은 명령행 프로퍼티를 테스트 JVM으로 넘긴다
+    System.properties.findAll { it.key.toString().startsWith('cucumber.') }.each { key, value ->
+        systemProperty key.toString(), value
+    }
+    testLogging {
+        events 'passed', 'skipped', 'failed'
+    }
+}
+
+// 단위 + 인수 테스트: ./gradlew check
+tasks.named('check') {
+    dependsOn tasks.named('acceptanceTest')
+}
