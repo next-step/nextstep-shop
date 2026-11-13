@@ -1,8 +1,8 @@
 package nextstep.member.domain;
 
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -13,8 +13,7 @@ import javax.persistence.Id;
 
 @Entity
 @Getter
-@Setter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Member {
 
     @Id
@@ -25,4 +24,13 @@ public class Member {
 
     @Enumerated(EnumType.STRING)
     private Grade grade;
+
+    private Member(String name, Grade grade) {
+        this.name = name;
+        this.grade = grade;
+    }
+
+    public static Member join(String name) {
+        return new Member(name, Grade.NORMAL);
+    }
 }
