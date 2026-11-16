@@ -29,12 +29,14 @@ public class Member {
 
     private String email;
 
-    private Member(String name, Grade grade) {
+    public Member(String name, Grade grade, String cardNo, String email) {
         this.name = name;
         this.grade = grade;
+        this.cardNo = cardNo;
+        this.email = email;
     }
 
     public static Member join(String name) {
-        return new Member(name, Grade.NORMAL);
+        return new Member(name, Grade.NORMAL, null, null);
     }
 }
