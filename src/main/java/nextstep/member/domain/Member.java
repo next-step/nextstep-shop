@@ -25,6 +25,10 @@ public class Member {
     @Enumerated(EnumType.STRING)
     private Grade grade;
 
+    private String cardNo;
+
+    private String email;
+
     private Member(String name, Grade grade) {
         this.name = name;
         this.grade = grade;

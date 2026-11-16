@@ -11,4 +11,18 @@
                 splitStatements="false"
                 relativeToChangelogFile="true"/>
     </changeSet>
+
+    <changeSet author="박재성" id="sql/2026_11_16_add_member_card_no_email.sql">
+        <sqlFile
+                path="sql/2026_11_16_add_member_card_no_email.sql"
+                splitStatements="false"
+                relativeToChangelogFile="true"/>
+    </changeSet>
+
+    <changeSet author="박재성" id="sql/2026_11_16_create_product_coupon_table.sql">
+        <sqlFile
+                path="sql/2026_11_16_create_product_coupon_table.sql"
+                splitStatements="false"
+                relativeToChangelogFile="true"/>
+    </changeSet>
 </databaseChangeLog>

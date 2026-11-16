@@ -4,5 +4,6 @@ package nextstep.member.domain;
 public enum Grade {
     NORMAL,
     SILVER,
-    GOLD
+    GOLD,
+    VIP
 }
