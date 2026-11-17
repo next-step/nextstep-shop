@@ -39,4 +39,8 @@ public class Member {
     public static Member join(String name) {
         return new Member(name, Grade.NORMAL, null, null);
     }
+
+    public void changeGrade(Grade grade) {
+        this.grade = grade;
+    }
 }

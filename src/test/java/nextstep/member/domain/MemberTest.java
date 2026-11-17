@@ -19,4 +19,13 @@ class MemberTest {
 
         assertThat(member.getGrade()).isEqualTo(Grade.NORMAL);
     }
+
+    @Test
+    void 등급을_바꾸면_바꾼_등급이_된다() {
+        Member member = Member.join("철수");
+
+        member.changeGrade(Grade.VIP);
+
+        assertThat(member.getGrade()).isEqualTo(Grade.VIP);
+    }
 }
