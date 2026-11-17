@@ -24,4 +24,10 @@ public final class MemberApi {
                 .when().get(위치)
                 .then().extract();
     }
+
+    public static ExtractableResponse<Response> 등급을_변경한다(String 위치, String 등급) {
+        return given().contentType(JSON).body(Map.of("grade", 등급))
+                .when().put(위치 + "/grade")
+                .then().extract();
+    }
 }
